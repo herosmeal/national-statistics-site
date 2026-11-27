@@ -6,6 +6,13 @@ import { drawBarChart, drawLineChart } from './charts.js';
 export const PALETTE = ['#2563eb', '#d97706', '#059669', '#dc2626', '#7c3aed', '#0891b2', '#db2777', '#65a30d', '#ea580c', '#475569'];
 export const LATEST_YEAR = 2023;
 
+// Values live in per-indicator arrays in YEARS order; look one up by year.
+function valueFor(code, key, year) {
+  const i = YEARS.indexOf(year);
+  if (i < 0) return null;
+  return COUNTRIES[code][key][i];
+}
+
 export function formatValue(key, value) {
   if (value == null) return '–';
   if (key === 'population') return Math.round(value).toLocaleString('en-US');
@@ -28,18 +35,18 @@ function countryOptions(selectedCode) {
 }
 
 function latestValue(code, key) {
-  const series = COUNTRIES[code].series[key];
-  for (let y = LATEST_YEAR; y >= YEARS[0]; y--) {
-    if (series[y] != null) return { year: y, value: series[y] };
+  const arr = COUNTRIES[code][key];
+  for (let i = YEARS.length - 1; i >= 0; i--) {
+    if (arr[i] != null) return { year: YEARS[i], value: arr[i] };
   }
   return { year: null, value: null };
 }
 
 function changeSince(code, key, fromYear) {
-  const series = COUNTRIES[code].series[key];
   const now = latestValue(code, key);
-  if (now.value == null || series[fromYear] == null) return null;
-  return { delta: now.value - series[fromYear], pct: ((now.value - series[fromYear]) / Math.abs(series[fromYear])) * 100 };
+  const from = valueFor(code, key, fromYear);
+  if (now.value == null || from == null) return null;
+  return { delta: now.value - from, pct: ((now.value - from) / Math.abs(from)) * 100 };
 }
 
 /* ---------------- Home ---------------- */
@@ -121,7 +128,7 @@ export function renderCountry(app, state) {
   }).join('');
 
   const tableRows = YEARS.map(y => {
-    const v = country.series[ind.key][y];
+    const v = valueFor(code, ind.key, y);
     return `<tr><td>${y}</td><td>${formatValue(ind.key, v)}</td></tr>`;
   }).join('');
 
@@ -160,7 +167,7 @@ export function renderCountry(app, state) {
     </section>`;
 
   drawLineChart(app.querySelector('#country-chart'),
-    [{ label: country.name, color: '#2563eb', points: YEARS.map(y => ({ year: y, value: country.series[ind.key][y] })) }],
+    [{ label: country.name, color: '#2563eb', points: YEARS.map(y => ({ year: y, value: valueFor(code, ind.key, y) })) }],
     ind.unit, YEARS);
 
   app.querySelector('#country-picker').addEventListener('change', e => {
@@ -192,7 +199,7 @@ export function renderCompare(app, state) {
   const chartSeries = selected.map((code, i) => ({
     label: COUNTRIES[code].name,
     color: PALETTE[Object.keys(COUNTRIES).indexOf(code) % PALETTE.length],
-    points: YEARS.map(y => ({ year: y, value: COUNTRIES[code].series[ind.key][y] })),
+    points: YEARS.map(y => ({ year: y, value: valueFor(code, ind.key, y) })),
   }));
 
   app.innerHTML = `
