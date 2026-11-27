@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Atlas of Nations — National Statistics Explorer</title>
+<meta name="description" content="Explore real national statistics for ten countries: population, GDP per capita, life expectancy, unemployment, infant mortality and GDP growth. Figures from the World Bank, 2014–2023.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#/home" id="brand-link">
+      <span class="brand-mark" aria-hidden="true">▦</span>
+      <span class="brand-text"><strong>Atlas of Nations</strong><span class="brand-sub">National Statistics Explorer</span></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#/home" data-nav="home">Home</a>
+      <a href="#/country/USA" data-nav="country">Countries</a>
+      <a href="#/compare" data-nav="compare">Compare</a>
+      <a href="#/about" data-nav="about">About the data</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap" id="app" aria-live="polite">
+  <!-- Views are rendered here by main.js -->
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <p id="source-note"></p>
+    <p class="fineprint">Atlas of Nations is an independent statistics explorer built for the make.fun “best national statistics site” bounty. It is not affiliated with the World Bank. Figures are shown exactly as published by the World Bank; a dash (–) means the Bank publishes no value for that country and year.</p>
+  </div>
+</footer>
+
+<script type="module" src="main.js"></script>
+</body>
+</html>
